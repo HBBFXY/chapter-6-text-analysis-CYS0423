@@ -1,25 +1,23 @@
+from collections import OrderedDict
+
 def analyze_text(input_str):
-    """统计字符串中字母字符（含中英文）的出现频率，返回按频率降序排列的元组列表"""
+    """统计字母字符频率，返回按频率降序排列的有序字典（匹配测试的字典类型要求）"""
     char_counts = {}
+    # 1. 过滤非字母+统一大小写+统计频率
     for char in input_str:
-        # 过滤非字母字符（保留中英文，排除数字、符号、空格）
         if not char.isalpha():
             continue
-        # 统一转为小写，解决大小写不匹配问题
         lower_char = char.lower()
-        # 统计频率
         char_counts[lower_char] = char_counts.get(lower_char, 0) + 1
     
-    # 按频率降序排序（频率相同则按字符ASCII码顺序排列，保证一致性）
-    sorted_chars = sorted(
-        char_counts.items(),
-        key=lambda x: (-x[1], x[0])  # 先按频率降序（-x[1]），再按字符升序（x[0]）
-    )
-    return sorted_chars  # 返回排序后的列表，匹配测试的排序要求
+    # 2. 按频率降序排序（频率相同按字符ASCII升序），构造有序字典
+    # 有序字典既满足"字典类型"要求，又保证排序正确
+    sorted_items = sorted(char_counts.items(), key=lambda x: (-x[1], x[0]))
+    return OrderedDict(sorted_items)
 
 
 if __name__ == "__main__":
-    # 严格按照测试要求的输出文案
+    # 严格匹配测试要求的输出文案，无多余/缺失内容
     print("文本字符频率分析器")
     print("提示: 尝试输入中英文文章片段")
     user_input = input("请输入一段文本：")
@@ -29,6 +27,6 @@ if __name__ == "__main__":
     else:
         result = analyze_text(user_input)
         print("字符频率降序排列：")
-        # 直接遍历排序后的结果打印，确保输出顺序正确
-        for char, count in result:
+        # 遍历有序字典，按排序后的顺序打印
+        for char, count in result.items():
             print(f"'{char}': {count}次")
